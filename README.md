@@ -80,6 +80,19 @@ bootstrap_options: {
 }
 ```
 
+If your parameter name contains a hyphen, such as when you're passing in "provider" parameters, you will need to use the older "hash rocket" syntax:
+
+```ruby
+bootstrap_options: {
+  extra_parameters: {
+    'provider-MyCustomProperty' => {
+      type: 'string',
+      value: 'my value'
+    }
+  }
+}
+```
+
 ### Transport Options
 
 All transport options are optional.
