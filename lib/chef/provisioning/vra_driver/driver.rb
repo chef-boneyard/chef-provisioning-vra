@@ -225,13 +225,28 @@ class Chef
           driver_options.fetch(:max_wait_time, 600).to_i
         end
 
+        def max_retries
+          driver_options.fetch(:max_retries, 1).to_i
+        end
+
         def wait_for(action_handler, &block)
           sleep_time    = 5
           start_time    = Time.now.utc.to_i
+          try           = 0
 
           Timeout.timeout(max_wait_time) do
             loop do
-              return if block.call == true
+              begin
+                return if block.call == true
+              rescue => e
+                action_handler.report_progress("Error encountered: #{e.class} - #{e.message}")
+
+                try += 1
+                if try > max_retries
+                  action_handler.report_progress('Retries exceeded, aborting...')
+                  raise
+                end
+              end
 
               time_elapsed = Time.now.utc.to_i - start_time
               action_handler.report_progress("been waiting #{time_elapsed}/#{max_wait_time} seconds" \

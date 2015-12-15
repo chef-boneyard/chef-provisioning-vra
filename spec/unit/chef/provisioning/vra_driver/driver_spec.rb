@@ -568,6 +568,83 @@ describe Chef::Provisioning::VraDriver::Driver do
     end
   end
 
+  describe '#max_retries' do
+    it 'returns the configured value in driver_options' do
+      allow(driver).to receive(:driver_options).and_return(max_retries: 3)
+
+      expect(driver.max_retries).to eq(3)
+    end
+
+    it 'returns the default value if there is no value in driver_options' do
+      allow(driver).to receive(:driver_options).and_return({})
+
+      expect(driver.max_retries).to eq(1)
+    end
+  end
+
+  describe '#wait_for' do
+    before do
+      allow(driver).to receive(:sleep)
+    end
+
+    context 'when the block returns true immediately' do
+      it 'does not retry' do
+        expect(driver).not_to receive(:sleep)
+        driver.wait_for(action_handler) { true }
+      end
+    end
+
+    context 'when the block returns true after 3 tries' do
+      it 'retries twice' do
+        expect(driver).to receive(:sleep).twice
+
+        @loop_count = 0
+        driver.wait_for(action_handler) do
+          @loop_count += 1
+          @loop_count == 3
+        end
+      end
+    end
+
+    context 'when an exception is raised on first try but not second' do
+      it 'does not raise an exception' do
+        allow(driver).to receive(:max_retries).and_return(1)
+        expect do
+          driver.wait_for(action_handler) do
+            if @raised_exception
+              true
+            else
+              @raised_exception = true
+              raise 'Raising exception on first loop'
+            end
+          end
+        end.not_to raise_error
+      end
+    end
+
+    context 'when an exception is raised on both tries' do
+      it 'raises an exception' do
+        allow(driver).to receive(:max_retries).and_return(1)
+        expect { driver.wait_for(action_handler) { raise RuntimeError } }.to raise_error(RuntimeError)
+      end
+    end
+
+    context 'when max_retries is 5 and the block raises exceptions' do
+      it 'tries the block 6 times' do
+        allow(driver).to receive(:max_retries).and_return(5)
+
+        @loop_count = 0
+        expect do
+          driver.wait_for(action_handler) do
+            @loop_count += 1
+            raise RuntimeError
+          end
+        end.to raise_error(RuntimeError)
+        expect(@loop_count).to eq(6)
+      end
+    end
+  end
+
   describe '#username_for' do
     context 'when machine_spec reference entry exists' do
       it 'returns the correct username' do
