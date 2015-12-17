@@ -44,6 +44,7 @@ class Chef
           super
 
           _, @base_url = driver_url.split(':', 2)
+          @resources = {}
         end
 
         def allocate_machine(action_handler, machine_spec, machine_options)
@@ -126,12 +127,12 @@ class Chef
 
         def resource_for(machine_spec)
           return nil if machine_spec.location.nil?
-          return @resource if @resource
 
           begin
-            @resource = vra_client.resources.by_id(machine_spec.location['resource_id'])
+            resource_id = machine_spec.location['resource_id']
+            @resources[resource_id] ||= vra_client.resources.by_id(resource_id)
           rescue Vra::Exception::NotFound
-            return nil
+            nil
           end
         end
 
