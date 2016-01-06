@@ -82,6 +82,7 @@ describe Chef::Provisioning::VraDriver::Driver do
           'driver_url'     => 'vra:https://vra-test.corp.local',
           'driver_version' => driver_version,
           'resource_id'    => 'test_id',
+          'resource_name'  => 'test_name',
           'allocated_at'   => 'test_time',
           'is_windows'     => false
         }
@@ -89,6 +90,7 @@ describe Chef::Provisioning::VraDriver::Driver do
 
       before do
         allow(resource).to receive(:id).and_return('test_id')
+        allow(resource).to receive(:name).and_return('test_name')
         allow(driver).to receive(:resource_for).and_return(nil)
         allow(driver).to receive(:bootstrap_options_for).and_return(bootstrap_options)
         allow(driver).to receive(:transport_options_for).and_return(transport_options)
