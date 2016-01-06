@@ -62,6 +62,7 @@ class Chef
             'driver_url'     => driver_url,
             'driver_version' => Chef::Provisioning::VraDriver::VERSION,
             'resource_id'    => resource.id,
+            'resource_name'  => resource.name,
             'allocated_at'   => Time.now.utc.to_s,
             'is_windows'     => transport_options[:is_windows]
           }
