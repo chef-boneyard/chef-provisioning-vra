@@ -1,5 +1,9 @@
 # chef-provisioning-vra CHANGELOG
 
+## v0.3.0 (2016-01-06)
+
+* [pr#7](https://github.com/chef-partners/chef-provisioning-vra/pull/7) Storing the vRA resource (host) name in the Chef node object so it can be displayed/queried in cases where the machine resource name does not match the vRA-generated hostname
+
 ## v0.2.1 (2015-12-17)
 * [pr#6](https://github.com/chef-partners/chef-provisioning-vra/pull/6) Fixing bug that would cause machines to not properly converge when used with machine_batch
 
