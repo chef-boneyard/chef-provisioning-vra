@@ -231,7 +231,7 @@ class Chef
           driver_options.fetch(:max_retries, 1).to_i
         end
 
-        def wait_for(action_handler, &block)
+        def wait_for(action_handler)
           sleep_time    = 5
           start_time    = Time.now.utc.to_i
           try           = 0
@@ -239,7 +239,7 @@ class Chef
           Timeout.timeout(max_wait_time) do
             loop do
               begin
-                return if block.call == true
+                return if yield == true
               rescue => e
                 action_handler.report_progress("Error encountered: #{e.class} - #{e.message}")
 

@@ -21,10 +21,10 @@ require 'chef/provisioning/vra_driver/driver'
 
 module TestHelpers
   class ActionHandler
-    def perform_action(_msg, &block)
+    def perform_action(_msg)
       raise 'perform_action called without a block' unless block_given?
 
-      block.call
+      yield
     end
   end
 end
