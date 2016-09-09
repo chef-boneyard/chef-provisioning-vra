@@ -276,7 +276,7 @@ class Chef
           winrm_options     = winrm_options_for(username, transport_options[:password])
 
           Chef::Log.debug("Creating WinRM connection to #{url}")
-          Chef::Provisioning::Transport::WinRM.new(url, :plaintext, winrm_options, config)
+          Chef::Provisioning::Transport::WinRM.new(url, winrm_transport, winrm_options, config)
         end
 
         def winrm_options_for(username, password)
