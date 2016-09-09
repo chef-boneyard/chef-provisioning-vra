@@ -270,7 +270,6 @@ class Chef
           remote_host       = remote_host_for(machine_options, resource)
           username          = username_for(machine_spec, machine_options, 'Administrator')
           winrm_transport   = transport_options[:winrm_transport].nil? ? :negotiate : transport_options[:winrm_transport].to_sym
-          Chef::Log.debug("WinRM transport: #{winrm_transport}")
           winrm_port        = transport_options[:winrm_port] unless transport_options[:winrm_port].nil?
           winrm_port ||= winrm_transport == :plaintext || winrm_transport == :negotiate ? 5985 : 5986
           scheme            = winrm_transport == :plaintext || winrm_transport == :negotiate ? 'http' : 'https'
