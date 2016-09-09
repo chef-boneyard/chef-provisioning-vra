@@ -102,6 +102,8 @@ All transport options are optional.
  * `password`:
    * *Windows*: required.  Set to the user's password to use to log in via WinRM.
    * *Unix*: optional.  If set, SSH key authentication will not be used.
+ * `winrm_transport`: set this `negotiate`, `ssl`, or `plaintext` to determine the transport method to use.  Defaults to `negotiate`.  See [WinRM README](https://github.com/WinRb/WinRM) for more details.
+ * `winrm_port`: set the port to connect over WinRM.  Defaults to `5896` if the transport is set to `ssl` and `5895` for all others.
 
 ### Resources
 
