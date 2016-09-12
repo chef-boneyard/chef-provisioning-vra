@@ -20,7 +20,7 @@
 class Chef
   module Provisioning
     module VraDriver
-      VERSION = '0.3.0'
+      VERSION = '0.3.0'.freeze
     end
   end
 end
