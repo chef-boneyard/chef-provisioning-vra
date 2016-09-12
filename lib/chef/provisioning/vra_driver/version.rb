@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Chef Partner Engineering (<partnereng@chef.io>)
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
@@ -19,7 +20,7 @@
 class Chef
   module Provisioning
     module VraDriver
-      VERSION = '0.3.0'.freeze
+      VERSION = '0.3.0'
     end
   end
 end

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # Author:: Chef Partner Engineering (<partnereng@chef.io>)
 # Copyright:: Copyright (c) 2015 Chef Software, Inc.
@@ -691,8 +692,7 @@ describe Chef::Provisioning::VraDriver::Driver do
       expect(Chef::Provisioning::Transport::WinRM).to receive(:new).with('http://test-host:5985/wsman',
                                                                          :plaintext,
                                                                          winrm_options,
-                                                                         config
-                                                                        ).and_return(transport)
+                                                                         config).and_return(transport)
 
       expect(driver.create_winrm_transport(machine_spec, machine_options, resource)).to eq(transport)
     end
@@ -746,8 +746,7 @@ describe Chef::Provisioning::VraDriver::Driver do
                                                                        'test_username',
                                                                        ssh_options,
                                                                        options,
-                                                                       config
-                                                                      ).and_return(transport)
+                                                                       config).and_return(transport)
 
       expect(driver.create_ssh_transport(machine_spec, machine_options, resource)).to eq(transport)
     end
@@ -988,8 +987,7 @@ describe Chef::Provisioning::VraDriver::Driver do
                                                 username: 'test_username',
                                                 password: 'test_password',
                                                 tenant:   'test_tenant',
-                                                verify_ssl: true
-                                               ).and_return(client)
+                                                verify_ssl: true).and_return(client)
 
       expect(driver.vra_client).to eq(client)
     end
