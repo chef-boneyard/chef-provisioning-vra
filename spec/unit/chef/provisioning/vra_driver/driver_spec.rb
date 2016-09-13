@@ -699,20 +699,6 @@ describe Chef::Provisioning::VraDriver::Driver do
       expect(driver.create_winrm_transport(machine_spec, machine_options, resource)).to eq(transport)
     end
 
-    it 'creates a proper transport instance with plaintext and returns it' do
-      allow(driver).to receive(:transport_options_for).and_return(transport_options_plaintext)
-      allow(driver).to receive(:remote_host_for).and_return('test-host')
-      allow(driver).to receive(:winrm_options_for).and_return(winrm_options)
-      allow(driver).to receive(:username_for).and_return('test_username')
-
-      expect(Chef::Provisioning::Transport::WinRM).to receive(:new).with('http://test-host:5985/wsman',
-                                                                         :plaintext,
-                                                                         winrm_options,
-                                                                         config).and_return(transport)
-
-      expect(driver.create_winrm_transport(machine_spec, machine_options, resource)).to eq(transport)
-    end
-
     it 'creates a proper transport instance with ssl on port 22 and returns it' do
       allow(driver).to receive(:transport_options_for).and_return(transport_options_ssl)
       allow(driver).to receive(:remote_host_for).and_return('test-host')
@@ -725,6 +711,28 @@ describe Chef::Provisioning::VraDriver::Driver do
                                                                          config).and_return(transport)
 
       expect(driver.create_winrm_transport(machine_spec, machine_options, resource)).to eq(transport)
+    end
+  end
+
+  describe '#winrm_transport_options_for' do
+    context 'when the transport options are not defined' do
+      let(:default_transport_options) { { winrm_transport: :negotiate, url: 'http://test-host:5985/wsman' } }
+      it 'returns a default transport options hash' do
+        expect(driver.winrm_transport_options_for('test-host', {})).to eq(default_transport_options)
+      end
+    end
+
+    context 'when the transport options include ssl and a port' do
+      let(:ssl_transport_options) { { winrm_transport: :ssl, url: 'https://test-host:22/wsman' } }
+      it 'returns a transport with https and the right port' do
+        expect(
+          driver.winrm_transport_options_for(
+            'test-host',
+            winrm_transport: 'ssl',
+            winrm_port: 22
+          )
+        ).to eq(ssl_transport_options)
+      end
     end
   end
 
