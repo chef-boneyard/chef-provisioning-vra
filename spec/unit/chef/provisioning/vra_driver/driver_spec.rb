@@ -678,19 +678,49 @@ describe Chef::Provisioning::VraDriver::Driver do
   end
 
   describe '#create_winrm_transport' do
-    let(:resource)          { double('resource') }
-    let(:transport)         { double('transport') }
-    let(:transport_options) { { password: 'test_password' } }
-    let(:winrm_options)     { double('winrm_options') }
+    let(:resource)                    { double('resource') }
+    let(:transport)                   { double('transport') }
+    let(:transport_options_default)   { { password: 'test_password' } }
+    let(:transport_options_plaintext) { { password: 'test_password', winrm_transport: 'plaintext' } }
+    let(:transport_options_ssl)       { { password: 'test_password', winrm_transport: 'ssl', winrm_port: 22 } }
+    let(:winrm_options)               { double('winrm_options') }
 
     it 'creates a proper transport instance and returns it' do
-      allow(driver).to receive(:transport_options_for).and_return(transport_options)
+      allow(driver).to receive(:transport_options_for).and_return(transport_options_default)
+      allow(driver).to receive(:remote_host_for).and_return('test-host')
+      allow(driver).to receive(:winrm_options_for).and_return(winrm_options)
+      allow(driver).to receive(:username_for).and_return('test_username')
+
+      expect(Chef::Provisioning::Transport::WinRM).to receive(:new).with('http://test-host:5985/wsman',
+                                                                         :negotiate,
+                                                                         winrm_options,
+                                                                         config).and_return(transport)
+
+      expect(driver.create_winrm_transport(machine_spec, machine_options, resource)).to eq(transport)
+    end
+
+    it 'creates a proper transport instance with plaintext and returns it' do
+      allow(driver).to receive(:transport_options_for).and_return(transport_options_plaintext)
       allow(driver).to receive(:remote_host_for).and_return('test-host')
       allow(driver).to receive(:winrm_options_for).and_return(winrm_options)
       allow(driver).to receive(:username_for).and_return('test_username')
 
       expect(Chef::Provisioning::Transport::WinRM).to receive(:new).with('http://test-host:5985/wsman',
                                                                          :plaintext,
+                                                                         winrm_options,
+                                                                         config).and_return(transport)
+
+      expect(driver.create_winrm_transport(machine_spec, machine_options, resource)).to eq(transport)
+    end
+
+    it 'creates a proper transport instance with ssl on port 22 and returns it' do
+      allow(driver).to receive(:transport_options_for).and_return(transport_options_ssl)
+      allow(driver).to receive(:remote_host_for).and_return('test-host')
+      allow(driver).to receive(:winrm_options_for).and_return(winrm_options)
+      allow(driver).to receive(:username_for).and_return('test_username')
+
+      expect(Chef::Provisioning::Transport::WinRM).to receive(:new).with('https://test-host:22/wsman',
+                                                                         :ssl,
                                                                          winrm_options,
                                                                          config).and_return(transport)
 
