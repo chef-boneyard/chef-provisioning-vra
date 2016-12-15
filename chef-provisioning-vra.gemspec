@@ -20,7 +20,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'chef-provisioning'
-  spec.add_dependency 'vmware-vra',            '~> 1.3'
+  spec.add_dependency 'vmware-vra',            '~> 2.0'
 
   spec.add_development_dependency 'chef',      '>= 12'
   spec.add_development_dependency 'bundler',   '~> 1.7'
