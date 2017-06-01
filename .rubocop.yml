@@ -1,3 +1,7 @@
+AllCops:
+  Exclude:
+    - 'spec/**/*'
+    - 'vendor/**/*'
 Metrics/AbcSize:
   Max: 50
 Metrics/ClassLength:
