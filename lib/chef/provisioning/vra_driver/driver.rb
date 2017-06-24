@@ -269,10 +269,40 @@ class Chef
           transport_options = transport_options_for(machine_options)
           remote_host       = remote_host_for(machine_options, resource)
           username          = username_for(machine_spec, machine_options, 'Administrator')
-          url               = "http://#{remote_host}:5985/wsman"
+          winrm_trans_opts  = winrm_transport_options_for(remote_host, transport_options)
           winrm_options     = winrm_options_for(username, transport_options[:password])
 
-          Chef::Provisioning::Transport::WinRM.new(url, :plaintext, winrm_options, config)
+          Chef::Log.debug("Creating WinRM connection to #{winrm_trans_opts[:url]}")
+          Chef::Provisioning::Transport::WinRM.new(
+            winrm_trans_opts[:url],
+            winrm_trans_opts[:winrm_transport],
+            winrm_options,
+            config
+          )
+        end
+
+        def winrm_transport_options_for(remote_host, transport_options)
+          winrm_port = transport_options[:winrm_port] unless transport_options[:winrm_port].nil?
+          case transport_options[:winrm_transport]
+          when nil
+            winrm_transport = :negotiate
+            scheme = 'http'
+            winrm_port ||= 5985
+          when 'ssl'
+            winrm_transport = :ssl
+            scheme = 'https'
+            winrm_port ||= 5986
+          when 'plaintext'
+            winrm_transport = :plaintext
+            scheme = 'http'
+            winrm_port ||= 5985
+          end
+          url = "#{scheme}://#{remote_host}:#{winrm_port}/wsman"
+
+          {
+            winrm_transport: winrm_transport,
+            url: url
+          }
         end
 
         def winrm_options_for(username, password)
